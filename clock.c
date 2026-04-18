@@ -1,8 +1,9 @@
 #include <time.h>
+#include<stdio.h>
 #include <unistd.h>
 
 #define SIZE 1000
-#define N_CPUs 5
+
 
 #define NOVA 1
 #define PRONTA 2
@@ -13,7 +14,7 @@
 #define LIVRE 1
 #define OCUPADA 0
 
-#define QUANTUM 2
+
 
 /*================================================================================/
 / Inicialmente, definimos tres structs, uma delas respons�vel pelo armazenamento  /
@@ -35,6 +36,10 @@ typedef struct
 
     int restante; //tempo restante para acabar a tarefa
     int quantum_restante;
+    int prioridade;
+    char lista_eventos[256];
+    char cor[7];//obter char para cor da tarefa
+
 
 } TCB;
 
@@ -55,6 +60,13 @@ typedef struct
 
 } Queue;
 
+typedef struct
+{
+  int algoritmo_escalonamento;
+  int quantum;
+  int qtde_cpus; 
+
+} ConfigSistema;
 /*===================================================================================/
 / para comecar propriamente a implementacao do sistema,precisamos definir o estado   /
 / inicial das tarefas, para que, ao serem devidamente "carregadas", entrarem na fila /
@@ -78,6 +90,8 @@ int full (Queue *q);
 void print (Queue *q);
 int getsize (Queue *q);
 int search (Queue *q, TCB* tarefa);
+
+
 
 //===================================Codigo central================================//
 
@@ -274,4 +288,62 @@ int search (Queue *q, TCB* tarefa) {
     if (q->array[i] == tarefa)
       return 1;
   return 0;
+}
+
+ConfigSistema lerConfiguracao(TCB tarefas[], int *qtde_tarefas)
+{
+  FILE *ler_arquivo;
+  char linha[256];
+  ConfigSistema config;
+  TCB tarefas_novas;
+  int 
+
+  printf("Digite o nome do arquivo de configuracao: ");
+    char arquivo[256];
+    scanf("%d", caminho);
+
+  ler_arquivo = fopen("caminho", "r");
+  if (ler_arquivo == NULL) {
+    printf("Erro ao abrir o arquivo de configuração.\n");
+    return -1;
+  }
+ 
+  while (fgets(linha, sizeof(linha), ler_arquivo)) {
+    // sistema
+fgets(linha, sizeof(linha), ler_arquivo);
+char *separar = strtok(linha, ";");
+
+separar = strtok(NULL, ";");
+sscanf(separar, "%d", &config.quantum);    // quantum
+
+separar = strtok(NULL, ";");
+sscanf(separar, "%d", &config.qtde_cpus); // qtde_cpus
+
+//  tarefas
+while (fgets(linha, sizeof(linha), ler_arquivo)) {
+    separar = strtok(linha, ";");
+    strcpy(tarefas[i].id_tarefa, separar);  // id
+
+    separar = strtok(NULL, ";");
+    strcpy(tarefas[i].cor, separar);         // cor
+
+    separar = strtok(NULL, ";");
+    sscanf(separar, "%d", &tarefas[i].ingresso);  // ingresso
+
+    separar = strtok(NULL, ";");
+    sscanf(separar, "%d", &tarefas[i].duracao);   // duracao
+
+    separar = strtok(NULL, ";");
+    sscanf(separar, "%d", &tarefas[i].prioridade); // prioridade
+
+    separar = strtok(NULL, "\n");
+    if (separar != NULL)
+        strcpy(tarefas[i].lista_eventos, separar);  // eventos
+    i++;
+}
+    
+ 
+
+  fclose(ler_arquivo);
+  return config;
 }
